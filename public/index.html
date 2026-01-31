@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQUAERDSSOFT | Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(-10px) translateX(-15px); }
+            75% { transform: translateY(-25px) translateX(5px); }
+        }
+        .antigravity { animation: float 10s ease-in-out infinite; }
+        ::-webkit-scrollbar { width: 0; }
+        body { cursor: none; background: #FAFAFA; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        .brand-snake-item { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        @media (max-width: 768px) { body { cursor: auto; } }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        syne: ['Syne', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { motion, AnimatePresence, useScroll, useSpring, useTransform } = FramerMotion;
+
+        const LucideIcon = ({ name, className = "w-6 h-6", ...props }) => {
+            const [icon, setIcon] = useState(null);
+            useEffect(() => {
+                const Icon = lucide[name];
+                if (Icon) setIcon(<Icon className={className} {...props} />);
+            }, [name]);
+            return icon;
+        };
+
+        const App = () => {
+            const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+            const { scrollYProgress } = useScroll();
+            const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+
+            useEffect(() => {
+                const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+                window.addEventListener("mousemove", handleMouseMove);
+                return () => window.removeEventListener("mousemove", handleMouseMove);
+            }, []);
+
+            const brands = [
+                { name: "GitHub", icon: "Github" },
+                { name: "YouTube", icon: "Youtube" },
+                { name: "Google", icon: "Chrome" },
+                { name: "Figma", icon: "Figma" },
+                { name: "Slack", icon: "Slack" },
+                { name: "Discord", icon: "MessageSquare" },
+                { name: "Twitter", icon: "Twitter" }
+            ];
+
+            const brandMarquee = [...brands, ...brands, ...brands, ...brands];
+            const logoUrl = "https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/project-uploads/84447f63-bea5-4634-83b3-f72c8bf854ce/ss2-1769798267584.png?width=8000&height=8000&resize=contain";
+
+            return (
+                <div className="relative min-h-screen">
+                    {/* Custom Cursor */}
+                    <motion.div
+                        className="fixed top-0 left-0 w-8 h-8 border border-black/20 rounded-full pointer-events-none z-[9999] hidden md:block"
+                        animate={{ x: mousePos.x - 16, y: mousePos.y - 16 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200, mass: 0.5 }}
+                    />
+                    <motion.div
+                        className="fixed top-0 left-0 w-1.5 h-1.5 bg-black rounded-full pointer-events-none z-[9999] hidden md:block"
+                        animate={{ x: mousePos.x - 3, y: mousePos.y - 3 }}
+                        transition={{ type: "spring", damping: 35, stiffness: 400, mass: 0.2 }}
+                    />
+
+                    {/* Progress Bar */}
+                    <motion.div className="fixed top-0 left-0 right-0 h-[2px] bg-black z-[2000] origin-left" style={{ scaleX }} />
+
+                    {/* Background Blobs */}
+                    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                        <motion.div
+                            animate={{ x: [0, 50, 0], y: [0, 30, 0], scale: [1, 1.1, 1] }}
+                            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                            className="absolute -top-1/4 -left-1/4 w-[80vw] h-[80vw] bg-zinc-200/30 rounded-full blur-[120px]"
+                        />
+                        <motion.div
+                            animate={{ x: [0, -40, 0], y: [0, 60, 0], scale: [1, 1.2, 1] }}
+                            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                            className="absolute -bottom-1/4 -right-1/4 w-[60vw] h-[60vw] bg-zinc-100/50 rounded-full blur-[100px]"
+                        />
+                    </div>
+
+                    {/* Nav */}
+                    <nav className="fixed top-8 left-0 right-0 z-[1000] px-6 md:px-12 flex items-center justify-between pointer-events-none">
+                        <div className="pointer-events-auto">
+                            <a href="#" className="flex items-center gap-4 group">
+                                <img src={logoUrl} className="w-10 h-10 grayscale group-hover:grayscale-0 transition-all duration-500 hover:rotate-[360deg]" />
+                            </a>
+                        </div>
+                        <div className="hidden md:flex items-center gap-2 pointer-events-auto absolute left-1/2 -translate-x-1/2">
+                            {["Ecosystem", "Principles", "Knowledge", "Insights"].map((item) => (
+                                <a key={item} href={`#${item.toLowerCase()}`} className="px-5 py-2.5 glass rounded-full text-[10px] font-bold uppercase tracking-[0.25em] text-black/50 hover:text-black hover:bg-white transition-all">
+                                    {item}
+                                </a>
+                            ))}
+                        </div>
+                        <div className="pointer-events-auto flex items-center gap-4">
+                            <div className="hidden lg:flex items-center -space-x-2 mr-2">
+                                {brands.slice(0, 5).map((brand, i) => (
+                                    <motion.div
+                                        key={i}
+                                        animate={{ y: [0, -10, 0], x: [0, i % 2 === 0 ? 5 : -5, 0] }}
+                                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+                                        className="w-8 h-8 glass rounded-full flex items-center justify-center shadow-sm hover:z-20 hover:scale-125 transition-transform"
+                                    >
+                                        <LucideIcon name={brand.icon} className="w-3.5 h-3.5 opacity-60" />
+                                    </motion.div>
+                                ))}
+                            </div>
+                            <button className="px-8 py-3 bg-black text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl group flex items-center gap-3">
+                                Access Core
+                                <LucideIcon name="ArrowRight" className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </div>
+                    </nav>
+
+                    <main className="relative z-10">
+                        {/* Hero */}
+                        <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="px-5 py-2 glass rounded-full inline-flex items-center gap-3 mb-16 shadow-sm">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 relative">
+                                    <div className="absolute inset-0 bg-emerald-500 animate-ping rounded-full" />
+                                </div>
+                                <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-black/40">Network Synchronized</span>
+                            </motion.div>
+                            <h1 className="text-[12vw] font-black tracking-[-0.06em] leading-[0.8] font-syne text-black mb-12 select-none uppercase">
+                                SQUAERDS<br />
+                                <span className="text-black/5">SOFT</span>
+                            </h1>
+                            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-24">
+                                <p className="text-black/30 text-[11px] font-bold tracking-[0.3em] uppercase max-w-xs leading-loose">
+                                    Engineering autonomous systems for the decentralized creative era.
+                                </p>
+                                <div className="h-[1px] w-20 bg-black/10 hidden md:block" />
+                                <div className="flex gap-12">
+                                    {[["Active Nodes", "40.2k"], ["Daily Ops", "1.2M"], ["Protocol v.", "2.0.4"]].map(([label, val]) => (
+                                        <div key={label} className="text-center md:text-left">
+                                            <p className="text-lg font-black font-syne leading-none mb-1">{val}</p>
+                                            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-black/20">{label}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Brand Snake (The Antigravity Snake Section) */}
+                        <section className="py-40 overflow-hidden">
+                            <div className="flex relative">
+                                <motion.div
+                                    animate={{ x: [0, -2000] }}
+                                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                                    className="flex items-center gap-24 whitespace-nowrap px-10"
+                                >
+                                    {brandMarquee.map((brand, i) => (
+                                        <motion.div
+                                            key={i}
+                                            animate={{ 
+                                                y: [0, Math.sin(i * 0.8) * 50, 0],
+                                                scale: [1, 1.1, 1],
+                                                rotate: [0, Math.cos(i * 0.5) * 5, 0]
+                                            }}
+                                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: i * 0.1 }}
+                                            className="flex items-center gap-6 group cursor-pointer"
+                                        >
+                                            <div className="w-20 h-20 glass rounded-full flex items-center justify-center border border-white group-hover:bg-black group-hover:text-white transition-all duration-500 shadow-xl">
+                                                <LucideIcon name={brand.icon} className="w-8 h-8" />
+                                            </div>
+                                            <span className="text-[11px] font-black uppercase tracking-[0.5em] text-black/10 group-hover:text-black transition-colors">
+                                                {brand.name}
+                                            </span>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+                            </div>
+                        </section>
+
+                        {/* Ecosystem Hub */}
+                        <section id="ecosystem" className="px-6 md:px-12 py-40 max-w-7xl mx-auto">
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 mb-32 items-end">
+                                <div className="lg:col-span-8">
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-black/20 mb-8 block">Project Infrastructure</span>
+                                    <h2 className="text-6xl md:text-9xl font-black font-syne tracking-tight uppercase leading-[0.85]">Core<br /><span className="text-black/5">Protocols</span></h2>
+                                </div>
+                                <div className="lg:col-span-4">
+                                    <p className="text-black/40 text-lg font-medium leading-relaxed">
+                                        Independent architecture designed for high-throughput creative networks.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                {[
+                                    { title: "WYRM AI", desc: "Next-gen cognitive automation.", link: "https://squaerdssoft.github.io/WYRM/", icon: "Hash" },
+                                    { title: "LOVORIS", desc: "Distributed node synchronization.", link: "https://squaerdssoft.github.io/LovorisMc/", icon: "Layers" }
+                                ].map((item, i) => (
+                                    <motion.a
+                                        key={item.title}
+                                        href={item.link}
+                                        whileHover={{ y: -10 }}
+                                        className="group relative p-16 rounded-[60px] glass hover:bg-black transition-all duration-700 min-h-[500px] flex flex-col justify-between overflow-hidden"
+                                    >
+                                        <div className="relative z-10">
+                                            <LucideIcon name={item.icon} className="w-8 h-8 mb-12 text-black/10 group-hover:text-white/20" />
+                                            <h3 className="text-7xl font-black font-syne uppercase text-black group-hover:text-white transition-all mb-8">{item.title}</h3>
+                                            <p className="text-black/30 text-xl font-medium group-hover:text-white/40 transition-colors">{item.desc}</p>
+                                        </div>
+                                        <div className="relative z-10 flex items-center justify-between">
+                                            <div className="px-6 py-2 rounded-full border border-black/5 group-hover:border-white/10 text-[9px] font-bold uppercase tracking-widest text-black/40 group-hover:text-white/50 flex items-center gap-3">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-black group-hover:bg-white animate-pulse" />
+                                                Live System
+                                            </div>
+                                            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                                                <LucideIcon name="ExternalLink" className="w-6 h-6 text-black" />
+                                            </div>
+                                        </div>
+                                    </motion.a>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Principles */}
+                        <section id="principles" className="px-6 md:px-12 py-60">
+                            <div className="max-w-7xl mx-auto">
+                                <div className="text-center mb-40">
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.8em] text-black/20 mb-10 block">System Foundations</span>
+                                    <h2 className="text-6xl md:text-9xl font-black font-syne uppercase tracking-tighter leading-none mb-12">DAİMA GELECEĞE</h2>
+                                    <div className="w-24 h-1 bg-black/10 mx-auto" />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-24">
+                                    {[
+                                        { icon: "Shield", title: "Autonomous Security", desc: "Encryption layers that adapt to network evolution." },
+                                        { icon: "Activity", title: "Neural Dynamics", desc: "Self-evolving logic gates that adapt to user interaction patterns." },
+                                        { icon: "Globe", title: "Open Logic", desc: "Transparent architecture built for collaborative growth." }
+                                    ].map((item, i) => (
+                                        <div key={item.title} className="group text-center md:text-left">
+                                            <div className="w-20 h-20 glass rounded-[30px] flex items-center justify-center mb-10 group-hover:bg-black group-hover:text-white transition-all duration-500 group-hover:rotate-[15deg] mx-auto md:mx-0 shadow-sm border border-white">
+                                                <LucideIcon name={item.icon} className="w-8 h-8" />
+                                            </div>
+                                            <h4 className="text-2xl font-black uppercase mb-6 tracking-tight">{item.title}</h4>
+                                            <p className="text-black/40 font-medium leading-relaxed max-w-xs mx-auto md:mx-0">{item.desc}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Footer */}
+                        <footer className="px-6 md:px-24 pt-60 pb-20 border-t border-black/[0.03]">
+                            <div className="max-w-7xl mx-auto">
+                                <div className="flex flex-col md:flex-row justify-between items-center gap-12">
+                                    <div className="flex items-center gap-10">
+                                        <span className="text-[9px] font-bold uppercase tracking-[0.6em] text-black/20">SQUAERDSSOFT © 2026</span>
+                                        <div className="h-[1px] w-12 bg-black/5 hidden md:block" />
+                                        <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-black/20">Independent Digital Entity</span>
+                                    </div>
+                                    <div className="flex gap-12 text-[9px] font-bold uppercase tracking-[0.4em] text-black/20">
+                                        <a href="#" className="hover:text-black transition-colors">Twitter</a>
+                                        <a href="#" className="hover:text-black transition-colors">Github</a>
+                                        <a href="#" className="hover:text-black transition-colors">Discord</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
